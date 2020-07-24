@@ -19,5 +19,6 @@ typedef struct
 
 MENU* create_menu(char* name, char* choices[], int num_choices);
 void print_menu(MENU* menu);
+void test();
 
 #endif // MENU_H
