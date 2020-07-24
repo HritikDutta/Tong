@@ -29,9 +29,9 @@ int main()
 	print_menu(menu);
 
 	int ch, choice = -1;
-	while (choice == -1 && (ch = getch()) != KEY_F(1))
+	while (true)
 	{
-		switch (ch)
+		switch (ch = getch())
 		{
 			case KEY_UP:
 				menu->selected = (menu->selected <= 0) ? menu->num_choices - 1: menu->selected - 1;
@@ -47,14 +47,16 @@ int main()
 				choice = menu->selected;
 				break;
 		}
-	}
 
-	// If an option is selected, show the user's choice at bottom of the screen
-	if (choice != -1)
-	{
-		mvprintw(LINES - 1, 0, "You selected: %s", menu->choices[choice]);
-		refresh();
-		getch();
+		if (choice == num_choices - 1) break;
+
+		if (choice != -1 && choice != num_choices - 1)
+		{
+			// Clean the line
+			for (int i = 0; i < COLS; i++) mvaddch(LINES - 1, i, ' ');
+			mvprintw(LINES - 1, 0, "You selected: %s", menu->choices[choice]);
+			refresh();
+		}
 	}
 
 	endwin();
