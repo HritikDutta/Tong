@@ -1,4 +1,4 @@
-#include "../headers/menu.h"
+#include "../includes/menu.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -29,7 +29,6 @@ MENU* create_menu(char* name, char* choices[], int num_choices)
 	menu->x = 0.5 * (COLS - menu->width);
 	menu->y = 0.5 * (LINES - menu->height);
 	menu->m_window = newwin(menu->height, menu->width, menu->y, menu->x);
-
 
 	// Ready Menu
 	box(menu->m_window, 0, 0);
@@ -69,7 +68,7 @@ void delete_menu(MENU* menu)
 	delwin(menu->m_window);
 }
 
-void test()
+void menu_test()
 {
 	char* name = "VIDEO GAME";
 
