@@ -9,23 +9,34 @@ typedef struct
     char sprite;
     double posx, posy;
     double velx, vely;
-} BALL;
+} BALL_DATA;
 
 typedef struct
 {
-    BALL m_ball;
+    char sprite;
+    int size;
+    double speed;
+    double range;
+} PADDLE_DATA;
+
+typedef struct
+{
+    // Ball
+    BALL_DATA m_ball;
 
     // Paddle
-    chtype paddle;
-    int half_paddle_size;
+    PADDLE_DATA m_paddle;
+
+    // Rendering Data
+    double unit_size;
 
     // Players
     int p1_score, p2_score;
-    double p1_pos, p2_pos;
+    double p1_pos, p2_pos;      // Positions of top ends of both paddles
 
 } GAME_DATA;
 
-void init_game(GAME_DATA* data);
+void init_game(GAME_DATA* data, double u_size);
 void reset_game(GAME_DATA* data);
 
 // Called in a loop
