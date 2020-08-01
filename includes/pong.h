@@ -15,7 +15,7 @@ typedef struct
 {
     char sprite;
     int size;
-    double speed;
+    int speed;
     double range;
 } PADDLE_DATA;
 

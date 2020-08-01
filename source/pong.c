@@ -1,9 +1,10 @@
 #include "../includes/pong.h"
+#include "../includes/misc.h"
 
 #define BALL_SPRITE 'O'
 #define PADDLE_SPRITE (char)219
 
-const double BALL_SPEED = 2.0;
+const double BALL_SPEED = 1.5;
 
 const int PADDLE_SIZE = 5;
 const int PADDLE_SPEED = 2;
@@ -12,7 +13,7 @@ void reset_ball(BALL_DATA* ball)
 {
     ball->posx = ball->posy = 0.0;
     ball->velx = BALL_SPEED;
-    ball->vely = BALL_SPEED * 0.75;
+    ball->vely = BALL_SPEED * 0.5;
 }
 
 void init_paddle(PADDLE_DATA* paddle, double unit_size)
@@ -23,19 +24,21 @@ void init_paddle(PADDLE_DATA* paddle, double unit_size)
     paddle->range = 1.0 - (paddle->size * unit_size);
 }
 
-void clamp(double* val, double min, double max)
+bool collision_with_paddle(GAME_DATA* data)
 {
-    *val = (*val > min) ? ((*val < max) ? *val : max) : min;
-}
-
-double min(double a, double b)
-{
-    return (a < b) ? a : b;
-}
-
-double max(double a, double b)
-{
-    return (a > b) ? a : b;
+    double ballY = data->m_ball.posy;
+    
+    return (
+        // Check collision with right paddle
+        data->m_ball.posx >= 1.0
+        && ballY <= data->p2_pos
+        && ballY >= data->p2_pos - (data->unit_size * data->m_paddle.size)
+    ) || (
+        // Check collision with left paddle
+        data->m_ball.posx <= -1.0
+        && ballY <= data->p1_pos
+        && ballY >= data->p1_pos - (data->unit_size * data->m_paddle.size)
+    );
 }
 
 void init_game(GAME_DATA* data, double u_size)
@@ -59,13 +62,16 @@ void reset_game(GAME_DATA* data)
 
 void update_ball(GAME_DATA* data, double ts)
 {
-    // Bounce ball at walls
-    if (data->m_ball.posx >= 1.0 || data->m_ball.posx <= -1.0)
-        data->m_ball.velx *= -1.0;
-
+    // Bounce ball at horizontal walls
     if (data->m_ball.posy >= 1.0 || data->m_ball.posy <= -1.0)
         data->m_ball.vely *= -1.0;
-
+    // Bounce ball if hit with paddle
+    else if (collision_with_paddle(data))
+        data->m_ball.velx *= -1.0;
+    // Reset ball when it hits a vertical wall
+    else if (data->m_ball.posx >= 1.0 || data->m_ball.posx <= -1.0)
+        reset_ball(&data->m_ball);
+    
     // Update position of ball
     data->m_ball.posx += data->m_ball.velx * ts * 1e-3;
     data->m_ball.posy += data->m_ball.vely * ts * 1e-3;
@@ -100,10 +106,21 @@ void update_paddles(GAME_DATA* data, int ch)
     }
 }
 
+void update_score(GAME_DATA* data)
+{
+    if (collision_with_paddle(data)) return;
+
+    if (data->m_ball.posx >= 1.0)
+        data->p1_score++;
+    else if (data->m_ball.posx <= -1.0)
+        data->p2_score++;
+}
+
 void update_game(GAME_DATA* data, double ts)
 {
     int ch = getch();
 
+    update_score(data);
     update_paddles(data, ch);
     update_ball(data, ts);
 }

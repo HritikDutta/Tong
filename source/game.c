@@ -1,8 +1,10 @@
 #include "../includes/game.h"
 #include "../includes/pong.h"
+#include "../includes/misc.h"
 
-#include <sys/time.h>
 #include <stdlib.h>
+#include <math.h>
+#include <string.h>
 
 const double move_speed = 6.0;
 
@@ -51,10 +53,19 @@ void render_paddles(GAME* game)
         mvwaddch(game->window, i, game->width - 1, game->data->m_paddle.sprite);
 }
 
+void render_score(GAME* game)
+{
+    int lscore_length = digits(game->data->p1_score);
+    int x = 0.5 * game->width - lscore_length - 2;
+
+    mvwprintw(game->window, 1, x, "%d | %d", game->data->p1_score, game->data->p2_score);
+}
+
 void render_game(GAME* game)
 {
     refresh_game(game);
 
+    render_score(game);
     render_ball(game);
     render_paddles(game);
 
@@ -65,13 +76,6 @@ void delete_game(GAME* game)
 {
     free(game->data);
     delwin(game->window);
-}
-
-double time_ms()
-{
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return tv.tv_sec * 1000.0 + tv.tv_usec * 0.001;
 }
 
 void game_test()
@@ -94,6 +98,10 @@ void game_test()
     double current;
 
     int ch;
+
+    // Print name of game
+    const char* name = "Tong!";
+    mvprintw(y - 1, 0.5 * (COLS - strlen(name)), name);
 
     // Game Loop
     while (true)
