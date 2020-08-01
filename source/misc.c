@@ -2,6 +2,7 @@
 
 #include <sys/time.h>
 #include <stdlib.h>
+#include <math.h>
 
 int digits(double num)
 {

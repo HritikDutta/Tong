@@ -6,6 +6,7 @@ void clamp(double* val, double min, double max);
 double min(double a, double b);
 double max(double a, double b);
 
+// Time
 double time_ms();
 
 #endif // MISC_H

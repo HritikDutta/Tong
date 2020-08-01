@@ -8,14 +8,14 @@ typedef struct
 {
     char sprite;
     double posx, posy;
-    double velx, vely;
+    double speed, direction; // direction in radians
 } BALL_DATA;
 
 typedef struct
 {
     char sprite;
-    int size;
-    int speed;
+    double size;
+    double speed;
     double range;
 } PADDLE_DATA;
 
@@ -27,13 +27,9 @@ typedef struct
     // Paddle
     PADDLE_DATA m_paddle;
 
-    // Rendering Data
-    double unit_size;
-
     // Players
     int p1_score, p2_score;
-    double p1_pos, p2_pos;      // Positions of top ends of both paddles
-
+    double p1_pos, p2_pos;
 } GAME_DATA;
 
 void init_game(GAME_DATA* data, double u_size);
