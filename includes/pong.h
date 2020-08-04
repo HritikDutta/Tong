@@ -36,6 +36,6 @@ void init_game(GAME_DATA* data, double u_size);
 void reset_game(GAME_DATA* data);
 
 // Called in a loop
-void update_game(GAME_DATA* data, double ts);
+bool update_game(GAME_DATA* data, double ts);   // Returns false when game is ended
 
 #endif // PONG_H

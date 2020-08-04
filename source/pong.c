@@ -128,6 +128,7 @@ void update_paddles(GAME_DATA* data, int ch)
             break;
     }
 
+    // Super OP AI player
     data->p2_pos = data->m_ball.posy;
     clamp(&data->p2_pos, -data->m_paddle.range, data->m_paddle.range);
 }
@@ -143,11 +144,13 @@ void update_score(GAME_DATA* data, double ts)
 }
 
 // TODO: Add an exit condition
-void update_game(GAME_DATA* data, double ts)
+bool update_game(GAME_DATA* data, double ts)
 {
     int ch = getch();
 
     update_score(data, ts);
     update_paddles(data, ch);
     update_ball(data, ts);
+
+    return ch != KEY_F(1);
 }

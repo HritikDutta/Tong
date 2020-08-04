@@ -104,11 +104,13 @@ void game_test()
     const char* name = "Tong!";
     mvprintw(y - 1, 0.5 * (COLS - strlen(name)), name);
 
+    bool run = true;
+
     // Game Loop
-    while (true)
+    while (run)
     {
         current = time_ms();
-        update_game(game->data, current - prev);
+        run = update_game(game->data, current - prev);
         prev = current;
 
         render_game(game);
