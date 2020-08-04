@@ -2,8 +2,10 @@
 
 #include <sys/time.h>
 #include <stdlib.h>
+#include <time.h>
 #include <math.h>
 
+// Maths
 int digits(double num)
 {
     if (num <= 0.0) return 1;
@@ -31,4 +33,15 @@ double time_ms()
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return tv.tv_sec * 1000.0 + tv.tv_usec * 0.001;
+}
+
+// Random
+void init_random()
+{
+    srand(time(NULL));
+}
+
+double i_random()
+{
+    return (double)rand() / RAND_MAX;
 }

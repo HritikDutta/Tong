@@ -8,6 +8,7 @@
 #define PADDLE_SPRITE (char)219
 
 const double BALL_SPEED = 1.5;
+const double BALL_SPREAD = 0.2;
 
 const int PADDLE_SIZE = 5;
 const int PADDLE_SPEED = 2;
@@ -43,6 +44,8 @@ void init_paddle(PADDLE_DATA* paddle, double unit_size)
 
 void init_game(GAME_DATA* data, double u_size)
 {
+    init_random();
+
     data->m_ball.sprite = BALL_SPRITE;
     reset_ball(&data->m_ball);
 
@@ -56,6 +59,7 @@ void init_game(GAME_DATA* data, double u_size)
 *   Functions for Updating
 */
 
+// TODO: Try and make a time independent version of this
 bool collision_with_paddle(GAME_DATA* data, double ts)
 {
     double ballY = data->m_ball.posy;
@@ -64,14 +68,25 @@ bool collision_with_paddle(GAME_DATA* data, double ts)
     return (
         // Check collision with right paddle
         ballX >= 1.0
-        && ballY <= data->p2_pos + (0.5 * data->m_paddle.size)
-        && ballY >= data->p2_pos - (0.5 * data->m_paddle.size)
+        && ballY < data->p2_pos + (0.51 * data->m_paddle.size)
+        && ballY > data->p2_pos - (0.51 * data->m_paddle.size)
     ) || (
         // Check collision with left paddle
         ballX <= -1.0
-        && ballY <= data->p1_pos + (0.5 * data->m_paddle.size)
-        && ballY >= data->p1_pos - (0.5 * data->m_paddle.size)
+        && ballY < data->p1_pos + (0.51 * data->m_paddle.size)
+        && ballY > data->p1_pos - (0.51 * data->m_paddle.size)
     );
+}
+
+// Alter direction of the ball based on how close it hits to the centre of the paddle
+void alter_ball_direction(GAME_DATA* data)
+{
+    if (data->m_ball.posx > 0)
+        data->m_ball.direction +=
+            BALL_SPREAD * -cos(M_PI * 2.0 * (data->m_ball.posy - data->p2_pos) / data->m_paddle.size);
+    else
+        data->m_ball.direction +=
+            BALL_SPREAD * -cos(M_PI * 2.0 * (data->m_ball.posy - data->p1_pos) / data->m_paddle.size);
 }
 
 void update_ball(GAME_DATA* data, double ts)
@@ -83,7 +98,8 @@ void update_ball(GAME_DATA* data, double ts)
     else if (collision_with_paddle(data, ts))
     {
         data->m_ball.direction = M_PI - data->m_ball.direction;
-        data->m_ball.speed += 0.1;
+        alter_ball_direction(data);
+        // data->m_ball.speed += 0.1;
     }
     // Reset ball when it hits a vertical wall
     else if (data->m_ball.posx >= 1.0 || data->m_ball.posx <= -1.0)
@@ -101,26 +117,19 @@ void update_paddles(GAME_DATA* data, int ch)
 {
     switch(ch)
     {
-        // Right Controls
-        case KEY_UP:
-            data->p2_pos += data->m_paddle.speed;
-            data->p2_pos = min(data->p2_pos, data->m_paddle.range);
-            break;
-        case KEY_DOWN:
-            data->p2_pos -= data->m_paddle.speed;
-            data->p2_pos = max(data->p2_pos, -data->m_paddle.range);
-            break;
-
         // Left Controls
-        case 'w':
+        case KEY_UP:
             data->p1_pos += data->m_paddle.speed;
             data->p1_pos = min(data->p1_pos, data->m_paddle.range);
             break;
-        case 's':
+        case KEY_DOWN:
             data->p1_pos -= data->m_paddle.speed;
             data->p1_pos = max(data->p1_pos, -data->m_paddle.range);
             break;
     }
+
+    data->p2_pos = data->m_ball.posy;
+    clamp(&data->p2_pos, -data->m_paddle.range, data->m_paddle.range);
 }
 
 void update_score(GAME_DATA* data, double ts)
@@ -133,6 +142,7 @@ void update_score(GAME_DATA* data, double ts)
         data->p2_score++;
 }
 
+// TODO: Add an exit condition
 void update_game(GAME_DATA* data, double ts)
 {
     int ch = getch();
