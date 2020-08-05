@@ -70,10 +70,9 @@ void delete_menu(MENU* menu)
 
 void menu_test()
 {
-	char* name = "VIDEO GAME";
+	char* name = "TONG!";
 
 	char* choices[] = {
-		"Resume Previous Match",
 		"Player vs Computer",
 		"Player vs Player",
 		"Computer vs Computer",

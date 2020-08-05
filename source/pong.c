@@ -13,6 +13,8 @@ const double BALL_SPREAD = 0.2;
 const int PADDLE_SIZE = 5;
 const int PADDLE_SPEED = 2;
 
+const double GAME_SPEED_INCREASE = 0.05;
+
 /*
 *   Functions for Resetting
 */
@@ -21,7 +23,8 @@ void reset_ball(BALL_DATA* ball)
 {
     ball->posx = ball->posy = 0.0;
     ball->speed = BALL_SPEED;
-    ball->direction = 1.0;
+    // Give the ball a random direction between -1 and 1 radians
+    ball->direction = i_random() * 2.0 - 1.0;
 }
 
 void reset_game(GAME_DATA* data)
@@ -83,10 +86,10 @@ void alter_ball_direction(GAME_DATA* data)
 {
     if (data->m_ball.posx > 0)
         data->m_ball.direction +=
-            BALL_SPREAD * -cos(M_PI * 2.0 * (data->m_ball.posy - data->p2_pos) / data->m_paddle.size);
+            BALL_SPREAD * cos(M_PI * (data->m_ball.posy - data->p2_pos) / data->m_paddle.size);
     else
         data->m_ball.direction +=
-            BALL_SPREAD * -cos(M_PI * 2.0 * (data->m_ball.posy - data->p1_pos) / data->m_paddle.size);
+            BALL_SPREAD * cos(M_PI * (data->m_ball.posy - data->p1_pos) / data->m_paddle.size);
 }
 
 void update_ball(GAME_DATA* data, double ts)
@@ -99,7 +102,7 @@ void update_ball(GAME_DATA* data, double ts)
     {
         data->m_ball.direction = M_PI - data->m_ball.direction;
         alter_ball_direction(data);
-        // data->m_ball.speed += 0.1;
+        data->m_ball.speed += GAME_SPEED_INCREASE;
     }
     // Reset ball when it hits a vertical wall
     else if (data->m_ball.posx >= 1.0 || data->m_ball.posx <= -1.0)

@@ -42,14 +42,14 @@ void render_paddles(GAME* game)
     GAME_DATA* data = game->data;
 
     // Render Left paddle
-    int start = (game->height - 2) * ((1.0 - game->data->p1_pos - 0.5 * data->m_paddle.size) * 0.5) + 1;
-    int end = (game->height - 2) * ((1.0 - game->data->p1_pos + 0.5 * data->m_paddle.size) * 0.5) + 1;
+    int start = (game->height - 2) * ((1.0 - (game->data->p1_pos + 0.5 * data->m_paddle.size)) * 0.5) + 1;
+    int end = (game->height - 2) * ((1.0 - (game->data->p1_pos - 0.5 * data->m_paddle.size)) * 0.5) + 1;
     for (int i = start; i < end; i++)
         mvwaddch(game->window, i, 0, game->data->m_paddle.sprite);
 
     // Render Right paddle
-    start = (game->height - 2) * ((1.0 - game->data->p2_pos - 0.5 * data->m_paddle.size) * 0.5) + 1;
-    end = (game->height - 2) * ((1.0 - game->data->p2_pos + 0.5 * data->m_paddle.size) * 0.5) + 1;
+    start = (game->height - 2) * ((1.0 - (game->data->p2_pos + 0.5 * data->m_paddle.size)) * 0.5) + 1;
+    end = (game->height - 2) * ((1.0 - (game->data->p2_pos - 0.5 * data->m_paddle.size)) * 0.5) + 1;
     for (int i = start; i < end; i++)
         mvwaddch(game->window, i, game->width - 1, game->data->m_paddle.sprite);
 }
@@ -101,7 +101,7 @@ void game_test()
     int ch;
 
     // Print name of game
-    const char* name = "Tong!";
+    const char* name = "TONG!";
     mvprintw(y - 1, 0.5 * (COLS - strlen(name)), name);
 
     bool run = true;
