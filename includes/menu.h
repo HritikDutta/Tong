@@ -21,6 +21,5 @@ MENU* create_menu(char* name, char* choices[], int num_choices);
 void print_menu(MENU* menu);
 
 void main_menu();
-void menu_test();
 
 #endif // MENU_H
