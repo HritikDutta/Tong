@@ -30,9 +30,12 @@ typedef struct
     // Players
     int p1_score, p2_score;
     double p1_pos, p2_pos;
+
+    // About the Game
+    bool vs_mode;
 } GAME_DATA;
 
-void init_game(GAME_DATA* data, double u_size);
+void init_game(GAME_DATA* data, double u_size, bool is_vs);
 void reset_game(GAME_DATA* data);
 
 // Called in a loop

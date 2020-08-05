@@ -45,7 +45,7 @@ void init_paddle(PADDLE_DATA* paddle, double unit_size)
     paddle->range = 1.0 - (0.5 * paddle->size);
 }
 
-void init_game(GAME_DATA* data, double u_size)
+void init_game(GAME_DATA* data, double u_size, bool is_vs)
 {
     init_random();
 
@@ -56,6 +56,8 @@ void init_game(GAME_DATA* data, double u_size)
 
     data->p1_pos = data->p2_pos = 0.0;
     data->p1_score = data->p2_score = 0;
+
+    data->vs_mode = is_vs;
 }
 
 /*
@@ -116,7 +118,8 @@ void update_ball(GAME_DATA* data, double ts)
     clamp(&data->m_ball.posy, -1.0, 1.0);
 }
 
-void update_paddles(GAME_DATA* data, int ch)
+// Paddle update function for playing against computer
+void update_paddles_ai(GAME_DATA* data, int ch)
 {
     switch(ch)
     {
@@ -136,6 +139,32 @@ void update_paddles(GAME_DATA* data, int ch)
     clamp(&data->p2_pos, -data->m_paddle.range, data->m_paddle.range);
 }
 
+void update_paddles_vs(GAME_DATA* data, int ch)
+{
+    switch(ch)
+    {
+        // Left Controls
+        case 'w':
+            data->p1_pos += data->m_paddle.speed;
+            data->p1_pos = min(data->p1_pos, data->m_paddle.range);
+            break;
+        case 's':
+            data->p1_pos -= data->m_paddle.speed;
+            data->p1_pos = max(data->p1_pos, -data->m_paddle.range);
+            break;
+        // Right Controls
+        case KEY_UP:
+            data->p2_pos += data->m_paddle.speed;
+            data->p2_pos = min(data->p2_pos, data->m_paddle.range);
+            break;
+        case KEY_DOWN:
+            data->p2_pos -= data->m_paddle.speed;
+            data->p2_pos = max(data->p2_pos, -data->m_paddle.range);
+            break;
+        
+    }
+}
+
 void update_score(GAME_DATA* data, double ts)
 {
     if (collision_with_paddle(data, ts)) return;
@@ -151,9 +180,12 @@ bool update_game(GAME_DATA* data, double ts)
 {
     int ch = getch();
 
-    update_score(data, ts);
-    update_paddles(data, ch);
+    // Use correct paddle update function according to game mode
+    if (data->vs_mode) update_paddles_vs(data, ch);
+    else update_paddles_ai(data, ch);
+
     update_ball(data, ts);
+    update_score(data, ts);
 
     return ch != KEY_F(1);
 }

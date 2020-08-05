@@ -1,6 +1,16 @@
-#include "../includes/game.h"
+#include "../includes/menu.h"
 
 int main()
 {
-	game_test();
+	// Initialize ncurses
+	initscr();
+	cbreak();
+	keypad(stdscr, TRUE);
+	noecho();
+	curs_set(0);	// Don't display cursor
+
+	main_menu();
+
+	// End ncurses
+	endwin();
 }

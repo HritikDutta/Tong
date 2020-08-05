@@ -7,7 +7,7 @@
 
 const double move_speed = 6.0;
 
-GAME* create_game(int x, int y, int width, int height)
+GAME* create_game(int x, int y, int width, int height, bool is_vs)
 {
     GAME* game = (GAME*)malloc(sizeof(GAME));
     
@@ -18,7 +18,7 @@ GAME* create_game(int x, int y, int width, int height)
     game->window = newwin(height, width, y, x);
     
     game->data = (GAME_DATA*)malloc(sizeof(GAME_DATA));
-    init_game(game->data, (2.0 / (height - 2)));
+    init_game(game->data, (2.0 / (height - 2)), is_vs);
 
     return game;
 }
@@ -79,21 +79,14 @@ void delete_game(GAME* game)
     delwin(game->window);
 }
 
-void game_test()
+void game(bool vs_mode)
 {
-    initscr();
-    cbreak();
-    keypad(stdscr, TRUE);
-    noecho();
     nodelay(stdscr, TRUE);      // Don't wait for user input
-
-    // Make cursor invisible
-    curs_set(0);
 
     int width = 70, height = 20;
     int x = 0.5 * (COLS - width);
     int y = 0.5 * (LINES - height);
-    GAME* game = create_game(x, y, width, height);
+    GAME* game = create_game(x, y, width, height, vs_mode);
 
     double prev = time_ms();
     double current;
@@ -117,5 +110,4 @@ void game_test()
     }
 
     delete_game(game);
-    endwin();
 }

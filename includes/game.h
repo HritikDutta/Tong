@@ -17,10 +17,10 @@ typedef struct
 
 double time_ms();
 
-GAME* create_game(int x, int y, int width, int height);
+GAME* create_game(int x, int y, int width, int height, bool is_vs);
 void render_game(GAME* game);
 void delete_game(GAME* game);
 
-void game_test();
+void game(bool vs_mode);
 
 #endif // GAME_H

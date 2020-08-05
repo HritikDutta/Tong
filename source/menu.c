@@ -1,4 +1,5 @@
 #include "../includes/menu.h"
+#include "../includes/game.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -68,24 +69,20 @@ void delete_menu(MENU* menu)
 	delwin(menu->m_window);
 }
 
-void menu_test()
+void main_menu()
 {
-	char* name = "TONG!";
-
+	// Initialize main menu
+	char* name = "Tong!";
 	char* choices[] = {
 		"Player vs Computer",
 		"Player vs Player",
-		"Computer vs Computer",
 		"Exit"
 	};
-
-	initscr();
-	cbreak();
-	keypad(stdscr, TRUE);
-	noecho();
-
-	// Make cursor invisible
-	curs_set(0);
+	char* choice_description[] = {
+		"Play against an AI opponent",
+		"Play against your friend",
+		"Exit the game"
+	};
 
 	printw("Press Arrow Keys to go up and down, and press Enter to select");
 	refresh();
@@ -95,7 +92,8 @@ void menu_test()
 	print_menu(menu);
 
 	int ch, choice = -1;
-	while (true)
+	bool selected = false;
+	while (!selected)	// Last choice should always be exit
 	{
 		switch (ch = getch())
 		{
@@ -111,20 +109,20 @@ void menu_test()
 
 			case '\n':
 				choice = menu->selected;
+				selected = true;
 				break;
 		}
 
-		if (choice == num_choices - 1) break;
-
-		if (choice != -1 && choice != num_choices - 1)
-		{
-			// Clean the line
-			for (int i = 0; i < COLS; i++) mvaddch(LINES - 1, i, ' ');
-			mvprintw(LINES - 1, 0, "You selected: %s", menu->choices[choice]);
-			refresh();
-		}
+		// Clean the line
+		for (int i = 0; i < COLS; i++) mvaddch(LINES - 1, i, ' ');
+		mvprintw(LINES - 1, 0, "%s", choice_description[menu->selected]);
+		refresh();
 	}
 
 	delete_menu(menu);
-	endwin();
+	erase();
+
+	// If player chose to exit then end game
+	if (choice == num_choices - 1) return;
+	else game(choice == 1);
 }
